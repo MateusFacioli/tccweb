@@ -20,7 +20,7 @@ class ComponentToPrint extends React.Component {
     this.setState({ activePage: pageNumber })
   }
 
-  componentDidMount() {
+  componentDidMount() { 
     
     const wordRef = firebase.database().ref('comerciante');
     wordRef.on('value', (snapshot) => {
