@@ -59,13 +59,13 @@ class ComponentToPrint extends React.Component {
 
   };
   Repasse() {
-   //pegar  nome/email e mostar na mensagem de r
+   //pegar  nome/email e a posicao do vetor pedidos[j]
    // fazer a conta de fato
    var x;
-   const r= window.confirm("Deseja fazer o repasse para");
+   const r= window.confirm("Deseja fazer o repasse para"+this.state.pedidos.nomecom);
    if (r===true)
      {
-     x="Repasse concluído";
+       
      }
    else
      {
