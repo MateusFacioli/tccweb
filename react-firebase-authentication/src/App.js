@@ -7,10 +7,15 @@ import Header from './components/header';
 import Footer from './components/footer';
 import {Menubar} from 'primereact/menubar';
 import {withRouter} from 'react-router-dom';
+//import firebaseAppAuth from './pages/login';
+//import { isAuthenticated } from './pages/auth';
+import Route from './routes';
+
 
 class App extends Component {
-  
+ 
   render() {
+ 
     const menuitems = [
       {
          label:'Home',
@@ -20,7 +25,7 @@ class App extends Component {
       {
          label:'Login',
          icon:'pi pi-fw pi-user',
-         command:() => this.props.history.push('/login')
+         command:()=>this.props.history.push('/login')
       },
       {
          label:'Dados',
@@ -28,9 +33,11 @@ class App extends Component {
          command:() => this.props.history.push('/dados')
       }
    ];
+   //route funciona mas como por as rotas do route dentro de this.props.history.push
     return (
       <div className="App">
         <Menubar model={menuitems}/>
+      
         <Header/>
         <div id="main">
             <main>

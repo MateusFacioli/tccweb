@@ -81,11 +81,11 @@ class ComponentToPrint extends React.Component {
         <br/>
           <img src={logo} className="App-logo" alt="logo" />
           <br/>
-          <br/>
+          <h1>Repasse aos comerciantes da plataforma EasyMeal-web</h1>
           <br/>
           </header>
           <h1>Data em avaliação</h1>
-    <p> <strong><Date/></strong></p>
+          <p> <strong><Date/></strong></p>
             {this.state.pedidos.map((ped) => {
               return(
                            
