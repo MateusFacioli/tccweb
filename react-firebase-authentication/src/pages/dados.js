@@ -24,8 +24,8 @@ class ComponentToPrint extends React.Component {
   }
 
   componentDidMount() {
-  /*
-    const advRef = firebase.database().ref('pedidos');//.orderByChild('comerciante');
+  
+    const advRef = firebase.database().ref('pedidos');//.orderByChild('comerciante/nome');
     advRef.on('value', (snapshot) => {
       let ref = snapshot.val();
       let newAdvState = [];
@@ -42,7 +42,7 @@ class ComponentToPrint extends React.Component {
          descricao: ref[j].produto.descricao,
          percent:perc,
          total: soma,
-          nomecom:"",
+          nomecom:ref[j].comerciante.nome,
           email: "",
           cliente:""
         });
@@ -56,44 +56,34 @@ class ComponentToPrint extends React.Component {
         pedidos: newAdvState
       });
     });
-*/
+
     const ref1 = firebase.database().ref('comerciante');
     ref1.on('value', (snapshot) => {
       let comerciante = snapshot.val();
+    
       let newAdvState = [];
       
        for (let j in comerciante)
        {
-        /*var total=0;
-        let soma=0;
-        var perc=0;
-        const ref2 = firebase.database().ref('comerciante').child('pedidos');//ou ref pedidos
-        ref2.on('value', (snapshot) => {
-          let pedidos = snapshot.val();
-         for (let k in pedidos)
-         {
-           soma+=pedidos[k].produto.preco;//somatoria total de todos os produtos do sistema
-           perc+=pedidos[k].produto.preco*0.1;
-         }
-         //soma=0;
-         perc=0;
-         total+=soma-perc;
-        });*/
-         
-           newAdvState.push({
+        var listaSelect = document.getElementById('cbcomerciante');
+        //saber quantos pedidos o comerciante[j] tem
+        // enquanto tiver pedidos somar
+         newAdvState.push({
              id:  comerciante[j].key,
              nomecom: comerciante[j].nome,
              email: comerciante[j].email,
-             vendido: "bla",
+             //vendido: soma,
              descontado: "ba",
              total: "baa"
            });
           
        }  
+       
+
        this.setState({
         comerciante: newAdvState
       });
-    });
+    });     
 };
 
   
@@ -130,25 +120,38 @@ class ComponentToPrint extends React.Component {
                       <div>
                        <table align="center">
                          <tr>
-                         <th>COMERCIANTE</th>
-                         <th>EMAIL</th>
-                         <th>TOTAL DE VENDAS</th>
-                         <th>DESCONTADO</th>
-                         <th>TOTAL A RECEBER</th>
-                         <th>ACÃO</th>
-                         </tr>
+                         <th>COMERCIANTES</th>
+                         <th>PEDIDOS</th>
+                         <th>DATA</th>
+                         <th>LOCAL</th>
+                        </tr>
+                        <td>
+                        <select name ="cbcomerciante">
+                        <option value="default">Selecione um comerciante</option>  
                          {this.state.comerciante.map((ped) => (
-                         <tr id="tabela">
-                            <td align="center" valign="middle" height="100px"  >{ped.nomecom}</td>
-                            <td align="center" valign="middle" height="100px"   >{ped.email}</td>
-                            <td align="center" valign="middle" height="100px"   >{ped.vendido}</td>
-                            <td align="center" valign="middle" height="100px"   >{ped.descontado}</td>
-                            <td align="center" valign="middle" height="100px"   >{ped.total}</td>
-                            <td><button onClick={(e) => this.Repasse(e)}>Repasse</button></td>
-                         </tr> 
+
+                           <option value= {ped.key} >Nome: {ped.nomecom} **** Email: ({ped.email}) vendido: {ped.vendido}</option>
                          ))}
-                       
+                        </select>
+                        </td>
+
+                        <table align="center">
+                         <td>
+                        <select name ="Pedidos">
+                        <option value="default">Selecione um pedido</option>  
+                         {this.state.pedidos.map((ped) => (
+
+                           <option value="nome">comerciante: {ped.nomecom} preço R$ {ped.preco} descontado R$({ped.percent}) a receber R${ped.total}</option>
+                           
+                        
+                         ))}
+                            
+                        </select>
+                        <td><button onClick={(e) => this.Repasse(e)}>Repasse</button></td>
+                        </td>
+                        
                        </table>                       
+                       </table>
                      </div>    
       </div>
 
