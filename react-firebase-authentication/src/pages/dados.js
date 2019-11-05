@@ -4,7 +4,6 @@ import firebase from '../firebaseConfig';
 import { className, COMBINATOR } from 'postcss-selector-parser';
 import logo from '../transacao.svg';
 import Date from '../components/Date';
-import Geocode from "react-geocode";
 
 
 class ComponentToPrint extends React.Component {
@@ -14,15 +13,8 @@ class ComponentToPrint extends React.Component {
     this.state = {
       comerciante: [],
       pedidos: [],
-      activePage: 15
     };
   };
-
-  handlePageChange(pageNumber) {
-    console.log(`active page is ${pageNumber}`);
-    this.setState({ activePage: pageNumber })
-  }
-
   componentDidMount() {
   
     const advRef = firebase.database().ref('pedidos');//.orderByChild('comerciante/nome');
@@ -56,38 +48,60 @@ class ComponentToPrint extends React.Component {
         pedidos: newAdvState
       });
     });
-
+// estou mexendo daqui pra baixo
     const ref1 = firebase.database().ref('comerciante');
-    ref1.on('value', (snapshot) => {
-      let comerciante = snapshot.val();
-    
-      let newAdvState = [];
+    ref1.on('value', (snapshot) => { //on child_added, on value, once child_added, once value
+      let comerciante = snapshot.val();//3 comerciantes ok
+      let pedidos=snapshot.child('pedidos').val();// da nulo
+      //se mudar value->child_added consigo pegar os dados do produto porem nao pega dados do comerciante e ao inves de mostrar
+      // 3 comerciantes ira mostrar comerciantes repetidos (numero de pedidos realizados)
       
+      let newAdvState = [];
+      var soma=0;
        for (let j in comerciante)
-       {
-        var listaSelect = document.getElementById('cbcomerciante');
-        //saber quantos pedidos o comerciante[j] tem
-        // enquanto tiver pedidos somar
-         newAdvState.push({
-             id:  comerciante[j].key,
-             nomecom: comerciante[j].nome,
-             email: comerciante[j].email,
-             //vendido: soma,
-             descontado: "ba",
-             total: "baa"
-           });
-          
-       }  
-       
+      {
+       if(snapshot.hasChild('pedidos'))//nao entrou aqui
+      {
+        var num= snapshot.numChildren();
+      }
 
+        var listaSelect = document.getElementById('cbcomerciante');  
+        // quero pegar o total vendido de cada comerciante pela estrutura comerciante[j].pedidos.produto.preco, para cada produto vendido
+        // salvar o snapshot em um array?
+        // tentei fazer em duas consultas mas nao deu
+          
+        newAdvState.push({
+          id:  comerciante[j].key,
+          nomecom: comerciante[j].nome,
+          email: comerciante[j].email,
+        //  vendido: soma,
+          descontado: "ba",
+          total: "baa"
+        });
+       }
+         soma=0;
        this.setState({
         comerciante: newAdvState
       });
     });     
+
 };
 
-  
-  
+snapshotToArray(snapshot) {
+  var returnArr = [];
+
+  snapshot.forEach(function(childSnapshot) {
+      var item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      var preco= childSnapshot.produto.preco;
+
+      returnArr.push(preco);
+  });
+
+  return returnArr;
+}
+ 
+
   Repasse() {
    //pegar  nome/email e a posicao do vetor pedidos[j]
    // fazer a conta de fato
