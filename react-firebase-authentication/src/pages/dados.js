@@ -16,8 +16,9 @@ class ComponentToPrint extends React.Component {
     };
   };
   componentDidMount() {
-  
-    const advRef = firebase.database().ref('pedidos');//.orderByChild('comerciante/nome');
+
+    /*
+   const advRef = firebase.database().ref('pedidos');//.orderByChild('comerciante/nome');
     advRef.on('value', (snapshot) => {
       let ref = snapshot.val();
       let newAdvState = [];
@@ -47,39 +48,71 @@ class ComponentToPrint extends React.Component {
       this.setState({
         pedidos: newAdvState
       });
-    });
-// estou mexendo daqui pra baixo
+    });*/
+
     const ref1 = firebase.database().ref('comerciante');
     ref1.on('value', (snapshot) => { //on child_added, on value, once child_added, once value
-      let comerciante = snapshot.val();//3 comerciantes ok
-      let pedidos=snapshot.child('pedidos').val();// da nulo
+      let comerciante = snapshot.val();
+      console.log(comerciante);
       //se mudar value->child_added consigo pegar os dados do produto porem nao pega dados do comerciante e ao inves de mostrar
-      // 3 comerciantes ira mostrar comerciantes repetidos (numero de pedidos realizados)
       
       let newAdvState = [];
       var soma=0;
        for (let j in comerciante)
       {
-       if(snapshot.hasChild('pedidos'))//nao entrou aqui
-      {
-        var num= snapshot.numChildren();
-      }
-
         var listaSelect = document.getElementById('cbcomerciante');  
-        // quero pegar o total vendido de cada comerciante pela estrutura comerciante[j].pedidos.produto.preco, para cada produto vendido
-        // salvar o snapshot em um array?
-        // tentei fazer em duas consultas mas nao deu
           
         newAdvState.push({
           id:  comerciante[j].key,
           nomecom: comerciante[j].nome,
           email: comerciante[j].email,
-        //  vendido: soma,
-          descontado: "ba",
-          total: "baa"
         });
+
+        var listaSelect2 = document.getElementById('cbpedidos');
+
        }
-         soma=0;
+       const advRef = firebase.database().ref('comerciante').on('child_added', (snapshot) => {
+        let com = snapshot.val();
+        let ped= snapshot.child('pedidos').val();
+        let tam= snapshot.child('pedidos').numChildren();
+        console.log(tam);
+        
+        if(tam===0)
+      {
+        let newAdvState = [];
+        newAdvState.push({
+           //id:  ref[j].key,
+          descontado:0,
+          vendido: "comerciante não tem produtos vendidos",
+          receber: 0
+         });
+      }
+       else{
+        let perc=0;
+        let soma=0;
+        let total=0;
+        var i=0;// snapshot.child('pedidos').key();
+      while(i<tam)
+      { 
+        soma+=ped[i].produto.preco;
+        //o i tem que ser o key do firebase mas como pegar o proximo key
+        i++;
+      }
+      perc=soma*0.1;
+      total=soma-perc;
+      let newAdvState = [];
+       newAdvState.push({
+          //id:  ref[j].key,
+         descontado:perc,
+         vendido: soma,
+         receber: total
+        });
+        soma=0;
+        perc=0;
+       }
+        
+        });
+       
        this.setState({
         comerciante: newAdvState
       });
@@ -143,21 +176,17 @@ snapshotToArray(snapshot) {
                         <select name ="cbcomerciante">
                         <option value="default">Selecione um comerciante</option>  
                          {this.state.comerciante.map((ped) => (
-
-                           <option value= {ped.key} >Nome: {ped.nomecom} **** Email: ({ped.email}) vendido: {ped.vendido}</option>
+                           <option value= {ped.key} >Nome: {ped.nomecom} **** Email: ({ped.email})</option>
                          ))}
                         </select>
                         </td>
 
                         <table align="center">
                          <td>
-                        <select name ="Pedidos">
+                        <select name ="cbpedidos">
                         <option value="default">Selecione um pedido</option>  
-                         {this.state.pedidos.map((ped) => (
-
-                           <option value="nome">comerciante: {ped.nomecom} preço R$ {ped.preco} descontado R$({ped.percent}) a receber R${ped.total}</option>
-                           
-                        
+                         {this.state.comerciante.map((ped) => (
+                           <option value="nome">Total vendido: R${ped.vendido} descontado: R${ped.descontado} a receber: R${ped.receber}</option>
                          ))}
                             
                         </select>
