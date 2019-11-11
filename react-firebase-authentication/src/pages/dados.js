@@ -13,129 +13,86 @@ class ComponentToPrint extends React.Component {
     this.state = {
       comerciante: [],
       pedidos: [],
+      vetoraux:[],
+      numcomex:0,
+      somaaux:[]
     };
   };
   componentDidMount() {
+let cont=0;
+let comex=0;
+let vetor2=[];
 
-    /*
-   const advRef = firebase.database().ref('pedidos');//.orderByChild('comerciante/nome');
-    advRef.on('value', (snapshot) => {
-      let ref = snapshot.val();
-      let newAdvState = [];
-      let perc=0;
-      let soma=0;
-      
-      for ( let j in ref) {
-      perc+= ref[j].produto.preco*0.1;
-      soma+=(ref[j].produto.preco)-perc;
-      
-        newAdvState.push({
-          id:  ref[j].key,
-         preco: ref[j].produto.preco,
-         descricao: ref[j].produto.descricao,
-         percent:perc,
-         total: soma,
-          nomecom:ref[j].comerciante.nome,
-          email: "",
-          cliente:""
-        });
-        
-       perc=0;
+    //consulta 1 pegar total de pedidos por comerciante
+   const ref1 = firebase.database().ref('comerciante').on('child_added', (snapshot) => {
+     let ped = snapshot.hasChild('pedidos');
+     let comerciante = snapshot.val();
+     let vendidos=snapshot.child('pedidos').val();
+     let newAdvState = [];  
+     if(snapshot.hasChild('pedidos'))
+     {cont++;
+       vetor2[cont-1]=this.snapshotToArray(snapshot.child('pedidos'));// tem tudo agora com tamanho 3 salvar em outro vet ?
+    }
+    let  soma=0;
+       let perc=0;
+      let total=0;
+    for(let i=0; i<vetor2.length; i++)
+    { 
+       for(let j=0; j<vetor2[i].length;j++)
+       {
+         soma+=vetor2[i][j].produto.preco;
+       }
+       perc=soma*0.1;
+       total=soma-perc;
+       var listaSelect = document.getElementById('cbpedidos');  
+       newAdvState.push({ descontado: perc, vendido: soma, receber: total});
+       this.setState({pedidos: newAdvState});
        soma=0;
-
-      }
-
-      this.setState({
-        pedidos: newAdvState
-      });
-    });*/
-
-    const ref1 = firebase.database().ref('comerciante');
-    ref1.on('value', (snapshot) => { //on child_added, on value, once child_added, once value
+       total=0;
+       perc=0;
+    }
+    });
+    //consulta 2 pegar os dados do comerciante (nome, email)
+     //nao pega comerciantes sem nome
+    const ref2 = firebase.database().ref('comerciante').on('value', (snapshot) => { 
       let comerciante = snapshot.val();
-      console.log(comerciante);
-      //se mudar value->child_added consigo pegar os dados do produto porem nao pega dados do comerciante e ao inves de mostrar
-      
+      let vetor1 =[this.snapshotToArray(snapshot)];
       let newAdvState = [];
-      var soma=0;
-       for (let j in comerciante)
-      {
-        var listaSelect = document.getElementById('cbcomerciante');  
-          
-        newAdvState.push({
+     for (let j in comerciante)
+      { 
+        
+         if(comerciante[j].nome!==undefined|| comerciante[j].email!==undefined)
+         {
+          var listaSelect = document.getElementById('cbcomerciante');  
+          //var itemsel= listaSelect.options[listaSelect.select]
+         newAdvState.push({
           id:  comerciante[j].key,
           nomecom: comerciante[j].nome,
           email: comerciante[j].email,
         });
-
-        var listaSelect2 = document.getElementById('cbpedidos');
-
-       }
-       const advRef = firebase.database().ref('comerciante').on('child_added', (snapshot) => {
-        let com = snapshot.val();
-        let ped= snapshot.child('pedidos').val();
-        let tam= snapshot.child('pedidos').numChildren();
-        console.log(tam);
-        
-        if(tam===0)
-      {
-        let newAdvState = [];
-        newAdvState.push({
-           //id:  ref[j].key,
-          descontado:0,
-          vendido: "comerciante não tem produtos vendidos",
-          receber: 0
-         });
-      }
-       else{
-        let perc=0;
-        let soma=0;
-        let total=0;
-        var i=0;// snapshot.child('pedidos').key();
-      while(i<tam)
-      { 
-        soma+=ped[i].produto.preco;
-        //o i tem que ser o key do firebase mas como pegar o proximo key
-        i++;
-      }
-      perc=soma*0.1;
-      total=soma-perc;
-      let newAdvState = [];
-       newAdvState.push({
-          //id:  ref[j].key,
-         descontado:perc,
-         vendido: soma,
-         receber: total
+        this.setState({
+          comerciante: newAdvState
         });
-        soma=0;
-        perc=0;
-       }
-        
-        });
-       
-       this.setState({
-        comerciante: newAdvState
-      });
-    });     
+       // var listaSelect2 = document.getElementById('cbpedidos');
+    }
+  }
+     
+     });
 
 };
 
 snapshotToArray(snapshot) {
   var returnArr = [];
-
   snapshot.forEach(function(childSnapshot) {
       var item = childSnapshot.val();
       item.key = childSnapshot.key;
-      var preco= childSnapshot.produto.preco;
-
-      returnArr.push(preco);
+      returnArr.push(item);
   });
 
   return returnArr;
 }
  
-
-  Repasse() {
+Repasse(e) {
    //pegar  nome/email e a posicao do vetor pedidos[j]
    // fazer a conta de fato
    var x;
@@ -149,6 +106,10 @@ snapshotToArray(snapshot) {
      x="Ainda não estou pronto";
      }
   }
+  handleChange(event) {
+   // this.setState({value: event.target.value});
+  }
+  
   render() {
     return (
       
@@ -172,8 +133,8 @@ snapshotToArray(snapshot) {
                          <th>DATA</th>
                          <th>LOCAL</th>
                         </tr>
-                        <td>
-                        <select name ="cbcomerciante">
+                        <td> 
+                        <select onClick={this.handleChange} name ="cbcomerciante">
                         <option value="default">Selecione um comerciante</option>  
                          {this.state.comerciante.map((ped) => (
                            <option value= {ped.key} >Nome: {ped.nomecom} **** Email: ({ped.email})</option>
@@ -183,10 +144,10 @@ snapshotToArray(snapshot) {
 
                         <table align="center">
                          <td>
-                        <select name ="cbpedidos">
+                        <select name ="cbpedidos" >
                         <option value="default">Selecione um pedido</option>  
-                         {this.state.comerciante.map((ped) => (
-                           <option value="nome">Total vendido: R${ped.vendido} descontado: R${ped.descontado} a receber: R${ped.receber}</option>
+                         {this.state.pedidos.map((ped) => (
+                           <option value="nome">Total vendido: R${ped.vendido}, descontado: R${ped.descontado} a receber: R${ped.receber}</option>
                          ))}
                             
                         </select>
