@@ -4,20 +4,39 @@ import firebase from '../firebaseConfig';
 import { className, COMBINATOR, id } from 'postcss-selector-parser';
 import logo from '../transacao.svg';
 import Date from '../components/Date';
-
-
+// import Geocode from "react-geocode";
+//   // set response language. Defaults to english.
+//   Geocode.setLanguage("pt");
+//   // set response region. Its optional.
+//   // A Geocoding request with region=es (Spain) will return the Spanish city.
+//   Geocode.setRegion("br");
+   
+//   // Enable or disable logs. Its optional.
+//   Geocode.enableDebug();
+   
+//   // Get address from latidude & longitude.
+//   //pegar dados do firebase e por aqui
+//   Geocode.fromLatLng("-22.832621666666668", "-47.053733333333334").then(
+//     response => {
+//       const address = response.results[0].formatted_address;
+//       console.log(address);
+//       debugger
+//     },
+//     error => {
+//       console.error(error);
+//     }
+//   );
 class ComponentToPrint extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       comerciante: [],
       pedidos: [],
       vetoraux:[],
-      numcomex:0,
-      somaaux:[],
-      local:[],
-      value:""
+      value:"",
+      numcomex:0
     };
     this.handleChange = this.handleChange.bind(this); 
   };
@@ -27,17 +46,20 @@ class ComponentToPrint extends React.Component {
     const ref2 = firebase.database().ref('comerciante').on('value', (snapshot) => { 
       let comerciante = snapshot.val();
       let newAdvState = [];
+      var cont=0;
      for (let j in comerciante)
       { 
          if(comerciante[j].nome!==undefined|| comerciante[j].email!==undefined)
          {
           var listaSelect = document.getElementById('cbcomerciante');  
+          cont++;
          newAdvState.push({
           id:  comerciante[j].key,
           nomecom: comerciante[j].nome,
-          email: comerciante[j].email,
+          email: comerciante[j].email
         });
         this.setState({comerciante: newAdvState});
+        this.setState({numcomex:cont});
     }
   }
      });
@@ -55,23 +77,37 @@ snapshotToArray(snapshot) {
 }
  
 Repasse(e) {
-   //pegar  nome/email e a posicao do vetor pedidos[j]
-   // fazer a conta de fato
-   var x;
-   const r= window.confirm("Deseja fazer o repasse para"+this.state.pedidos.nomecom);
+
+if(this.state.value!=="")
+{
+ 
+  var botao = document.getElementById('botao');
+   const r= window.confirm("Deseja fazer o repasse para o comerciante "+this.state.value+" ? ");
    if (r===true)
-     {
-       
-     }
+     { 
+      window.confirm("Valores repassados");
+      botao.setAttribute("disabled", "disabled"); 
+    }
    else
      {
-     x="Ainda não estou pronto";
+ 
      }
+     
+  if(this.state.vetoraux.find(v=> v===this.state.value))
+  {
+    botao.removeAttribute("disabled", "disabled");   
+ }
   }
+  
+}
 
   handleChange(event) {
     this.setState({value:event.target.value});
-    
+    if(this.state.vetoraux.length<this.state.numcomex)
+    {
+    this.state.vetoraux.push(this.state.value);
+    document.getElementById('botao').removeAttribute("disabled", "disabled"); 
+    }
 let cont=0;
 let comex=0;
 let vetor2=[];
@@ -125,6 +161,7 @@ let vetor2=[];
           </header>
           <h1>Data em avaliação</h1>
           <p> <strong><Date/></strong></p>                           
+
                       
                       <div>
                        <table align="center">
@@ -143,12 +180,12 @@ let vetor2=[];
                         </td>
                         <table align="center">
                          <td>
-                        <select name ="cbpedidos" >
+                        <select name ="cbpedidos">
                          {this.state.pedidos.map((ped) => (
   <option value="nome"> Total vendido: R${ped.vendido}, descontado: R${ped.descontado} a receber: R${ped.receber}</option>
                          ))}
                         </select>
-                        <td><button onClick={(e) => this.Repasse(e)}>Repasse</button></td>
+                        <td><button id="botao" name="botao" onClick={(e) => this.Repasse(e)}>Repasse</button></td>
                         </td>
                        </table>                       
                       </table>
