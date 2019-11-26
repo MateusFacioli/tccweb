@@ -45,12 +45,14 @@ class ComponentToPrint extends React.Component {
      //nao mostra comerciantes sem nome
     const ref2 = firebase.database().ref('comerciante').on('value', (snapshot) => { 
       let comerciante = snapshot.val();
+      //let pedidos = snapshot.child('pedidos');
       let newAdvState = [];
       var cont=0;
      for (let j in comerciante)
       { 
          if(comerciante[j].nome!==undefined|| comerciante[j].email!==undefined)
          {
+           if(comerciante[j].pedidos!==undefined){
           var listaSelect = document.getElementById('cbcomerciante');  
           cont++;
          newAdvState.push({
@@ -60,6 +62,7 @@ class ComponentToPrint extends React.Component {
         });
         this.setState({comerciante: newAdvState});
         this.setState({numcomex:cont});
+      }
     }
   }
      });
@@ -103,8 +106,17 @@ if(this.state.value!=="")
 
   handleChange(event) {
     this.setState({value:event.target.value});
+    if(event.target.value==="default")
+    {
+      for(let i=0; i<this.state.vetoraux.length;i++)
+      {
+        this.state.pedidos.pop();
+      }
+     // document.getElementById('botao').setAttribute("disabled", "disabled");   
+    }
     if(this.state.vetoraux.length<this.state.numcomex)
     {
+      
     this.state.vetoraux.push(this.state.value);
     document.getElementById('botao').removeAttribute("disabled", "disabled"); 
     }
@@ -168,7 +180,6 @@ let vetor2=[];
                          <tr>
                          <th>COMERCIANTES</th>
                          <th>TOTAL</th>
-                         <th>LOCAL</th>
                         </tr>
                         <td> 
                         <select  name ="cbcomerciante" value={this.state.value} onChange={this.handleChange}>
