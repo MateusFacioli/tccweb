@@ -3,7 +3,7 @@ import withFirebaseAuth from 'react-with-firebase-auth'
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import firebaseConfig from '../firebaseConfig';
-import logo from '../logo.svg';
+import logo from '../ic_logoeasymeal.svg';
 import '../App.css';
 
 //const firebaseApp = firebase.initializeApp(firebaseConfig);
