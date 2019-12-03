@@ -32,13 +32,19 @@ class App extends Component {
       },
       {
          label:'Login',
-         icon:'pi pi-fw pi-user',
+         icon:'pi pi-fw pi-chart',
          command:()=> history.push('/login')
       },
       {
          label:'Dados',
          icon:'pi pi-fw pi-comment',
          command:() => user ? history.push('/dados') : history.push('/login')
+      }
+      ,
+      {
+         label:'Gráficos',
+         icon:'pi pi-fw pi-chart-line',
+         command:() => user ? history.push('/graficos') : history.push('/login')
       }
    ];
    //route funciona mas como por as rotas do route dentro de this.props.history.push

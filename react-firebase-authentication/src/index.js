@@ -8,6 +8,7 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import HomePage from './pages/home';
 import login from './pages/login';
 import dados from './pages/dados';
+import graficos from './pages/Graficos';
 ReactDOM.render(
     (
         <Router>
@@ -16,6 +17,7 @@ ReactDOM.render(
                     <Route exact path="/" component={HomePage}/>
                     <Route path="/login" component={login}/>
                     <Route path="/dados" component={dados}/>
+                    <Route path="/graficos" component={graficos}/>
                 </Switch>
             </App>
         </Router>

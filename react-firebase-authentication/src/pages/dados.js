@@ -4,28 +4,8 @@ import firebase from '../firebaseConfig';
 import { className, COMBINATOR, id } from 'postcss-selector-parser';
 import logo from '../transacao.svg';
 import Date from '../components/Date';
-// import Geocode from "react-geocode";
-//   // set response language. Defaults to english.
-//   Geocode.setLanguage("pt");
-//   // set response region. Its optional.
-//   // A Geocoding request with region=es (Spain) will return the Spanish city.
-//   Geocode.setRegion("br");
-   
-//   // Enable or disable logs. Its optional.
-//   Geocode.enableDebug();
-   
-//   // Get address from latidude & longitude.
-//   //pegar dados do firebase e por aqui
-//   Geocode.fromLatLng("-22.832621666666668", "-47.053733333333334").then(
-//     response => {
-//       const address = response.results[0].formatted_address;
-//       console.log(address);
-//       debugger
-//     },
-//     error => {
-//       console.error(error);
-//     }
-//   );
+import Grafico from './Graficos';
+
 class ComponentToPrint extends React.Component {
 
   constructor(props) {
@@ -106,6 +86,7 @@ if(this.state.value!=="")
 
   handleChange(event) {
     this.setState({value:event.target.value});
+    
     if(event.target.value==="default")
     {
       for(let i=0; i<this.state.vetoraux.length;i++)
@@ -173,8 +154,6 @@ let vetor2=[];
           </header>
           <h1>Data em avaliação</h1>
           <p> <strong><Date/></strong></p>                           
-
-                      
                       <div>
                        <table align="center">
                          <tr>
