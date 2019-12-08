@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { PieChart, Pie, Sector } from 'recharts';
 
 const data = [
-    {name: 'mattcom@gmail.com', value: 5.1},
     {name: 'liviagabrielamonteiro@viamoc.com.br', value: 0.75},
     {name: 'eliasviniciusvicentefigueiredo@solarisbrasil.com.br', value: 2.2},
     {name: 'j.otaviomorais@gmail.com', value: 2},

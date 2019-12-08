@@ -6,7 +6,6 @@ import Pie from '../components/Pie';
 import Radar from '../components/Radar';
 
 const data  = [
-  {name: 'mattcom@gmail.com', total_vendas_R$: 51, produtos: 4, amt: 2000},
   {name: 'liviagabrielamonteiro@viamoc.com.br', total_vendas_R$: 7.5, produtos: 5, amt: 3000},
   {name: 'eliasviniciusvicentefigueiredo@solarisbrasil.com.br', total_vendas_R$: 22, produtos: 6, amt: 4000},
   {name: 'j.otaviomorais@gmail.com', total_vendas_R$: 20, produtos: 2, amt:5000},

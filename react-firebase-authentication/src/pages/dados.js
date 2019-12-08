@@ -128,9 +128,20 @@ let vetor2=[];
        {
           soma+=vetor3[i][j].produto.preco;
        }
-         perc=soma*0.1;
-         total=soma-perc;
        
+       soma=soma.toFixed(2);
+       soma=soma.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+       Math.round(soma);
+
+         perc=soma*0.1;
+
+         perc=perc.toFixed(2);
+         Math.round(perc);
+
+         total=soma-perc;
+         total=total.toFixed(2);
+         Math.round(total);
+       //soma.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         newAdvState.push({ descontado: perc, vendido: soma, receber: total, comerciante:email});
         this.setState({pedidos: newAdvState});
       }
